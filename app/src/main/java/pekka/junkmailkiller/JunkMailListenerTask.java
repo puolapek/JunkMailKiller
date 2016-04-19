@@ -31,6 +31,7 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
 
         try {
             int frequence = 0;
+            System.out.println(frequence);
             Properties properties = new Properties();
             Session emailSession = Session.getDefaultInstance(properties);
             Store store = emailSession.getStore("imap");
