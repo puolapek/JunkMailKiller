@@ -31,6 +31,8 @@
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity" />
+
+        <service android:name=".JunkMailListenerService" />
     </application>
 
 </manifest>

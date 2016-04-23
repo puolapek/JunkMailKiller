@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class KeywordsActivity extends AppCompatActivity {
 
-    ArrayList<String> keywords=new ArrayList<String>();
+    ArrayList<String> keywords = new ArrayList<String>();
     ArrayAdapter<String> adapter;
     private final int INPUT_MODE = 1;
     private final int LIST_MODE = 2;
@@ -27,8 +27,9 @@ public class KeywordsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keywords);
-
-        keywords = getKeywords();
+        if (getKeywords() != null) {
+            keywords = getKeywords();
+        }
         setupKeywordListListener();
 
         manageObjectsVisibility(LIST_MODE);
@@ -74,11 +75,6 @@ public class KeywordsActivity extends AppCompatActivity {
 
     private void setupKeywordListListener() {
         final DBHelper dbHelper = new DBHelper(this);
-        keywords = getKeywords();
-
-        if (keywords == null) {
-            return;
-        }
 
         final ListView listview = (ListView) findViewById(R.id.listView);
         adapter=new ArrayAdapter<String>(this,
@@ -122,16 +118,17 @@ public class KeywordsActivity extends AppCompatActivity {
         dbHelper.insertKeyword(keyword.getText().toString());
         Toast.makeText(this, "Keyword added.", Toast.LENGTH_LONG).show();
 
+        if (keywords == null) {
+            keywords = new ArrayList<String>();
+        }
         keywords.add(keyword.getText().toString());
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
 
         keyword.setText("");
 
         manageObjectsVisibility(LIST_MODE);
-    }
-
-    public void goBack(View view) {
-        NavUtils.navigateUpFromSameTask(this);
     }
 
     private ArrayList getKeywords() {

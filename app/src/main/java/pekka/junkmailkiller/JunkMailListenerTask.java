@@ -30,8 +30,7 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
     protected Void doInBackground(Object... params) {
 
         try {
-            int frequence = 0;
-            System.out.println(frequence);
+            int frequence;
             Properties properties = new Properties();
             Session emailSession = Session.getDefaultInstance(properties);
             Store store = emailSession.getStore("imap");
@@ -59,7 +58,7 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
             }
             toFolder.open(Folder.READ_WRITE);
 
-            OrTerm searchTerm = setSearhTerms(settings);
+            OrTerm searchTerm = setSearchTerms(settings);
             Message[] toFolderMessages = new Message[1];
 
             for (;;) {
@@ -69,10 +68,6 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
                     toFolder.close(true);
                     store.close();
                     break;
-                }
-
-                if (1==1) {
-                    continue;
                 }
 
                 Message[] junkMails = fromFolder.search(searchTerm);
@@ -91,7 +86,7 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
                     TimeUnit.SECONDS.sleep(frequence);
 
                 } catch (InterruptedException e) {
-
+                    e.printStackTrace();
                 }
 
                 // Reopen
@@ -110,7 +105,7 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
         return null;
     }
 
-    public static OrTerm setSearhTerms(Settings settings) {
+    public static OrTerm setSearchTerms(Settings settings) {
         int NUMBER_OF_KEYWORDS = settings.getKeyWords().size();
         SubjectTerm[] subjectTerms = new SubjectTerm[NUMBER_OF_KEYWORDS];
         BodyTerm[] bodyTerms = new BodyTerm[NUMBER_OF_KEYWORDS];
@@ -142,7 +137,7 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
 
     private boolean createFolder(Folder folder)
     {
-        boolean isCreated = true;
+        boolean isCreated;
 
         try
         {
