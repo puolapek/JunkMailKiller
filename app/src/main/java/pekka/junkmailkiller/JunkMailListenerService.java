@@ -138,7 +138,7 @@ public class JunkMailListenerService extends Service {
             bodyTerms[i] = bodyTerm;
         }
 
-        Flags seen = new Flags(Flags.Flag.SEEN);
+        //Flags seen = new Flags(Flags.Flag.SEEN);
         //FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
         OrTerm subjectOrTerms = new OrTerm(subjectTerms);
         OrTerm bodyOrTerms = new OrTerm(bodyTerms);
