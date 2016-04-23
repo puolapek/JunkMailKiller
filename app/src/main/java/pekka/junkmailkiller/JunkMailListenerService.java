@@ -118,7 +118,7 @@ public class JunkMailListenerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
     }
 
     public static OrTerm setSearchTerms(Settings settings) {

@@ -1,5 +1,7 @@
 package pekka.junkmailkiller;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void startService(View view) {
 
+        startService(new Intent(getBaseContext(), JunkMailListenerService.class));
+
+        findViewById(R.id.startButton).setEnabled(false);
+        findViewById(R.id.stopButton).setEnabled(true);
+
+        /*
         if (junkMailListenerTask == null || junkMailListenerTask.getStatus() != AsyncTask.Status.RUNNING) {
 
             junkMailListenerTask = new JunkMailListenerTask();
@@ -65,11 +73,17 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.stopButton).setEnabled(true);
 
             Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     public void stopService(View view) {
 
+        stopService(new Intent(getBaseContext(), JunkMailListenerService.class));
+
+        findViewById(R.id.startButton).setEnabled(true);
+        findViewById(R.id.stopButton).setEnabled(false);
+
+        /*
         if (junkMailListenerTask != null && junkMailListenerTask.getStatus() == AsyncTask.Status.RUNNING) {
 
             junkMailListenerTask.cancel(true);
@@ -78,18 +92,30 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.stopButton).setEnabled(false);
 
             Toast.makeText(this, "Service Stopped", Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 
     private void init() {
 
-        if (junkMailListenerTask == null || junkMailListenerTask.getStatus() != AsyncTask.Status.RUNNING) {
+
+        if (!isMyServiceRunning(JunkMailListenerService.class)) {
+        //if (junkMailListenerTask == null || junkMailListenerTask.getStatus() != AsyncTask.Status.RUNNING) {
             findViewById(R.id.startButton).setEnabled(true);
             findViewById(R.id.stopButton).setEnabled(false);
         } else {
             findViewById(R.id.startButton).setEnabled(false);
             findViewById(R.id.stopButton).setEnabled(true);
         }
+    }
+
+    private boolean isMyServiceRunning(Class serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkMailServerSettings() {
@@ -100,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         return !(settings.getHost() == null || settings.getUser() == null || settings.getPassword() == null);
     }
 
+    /*
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (junkMailListenerTask != null && junkMailListenerTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -111,6 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return super.onKeyDown(keyCode, event);
-    }
+    }*/
 
 }
