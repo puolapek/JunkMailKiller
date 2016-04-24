@@ -24,6 +24,8 @@ import javax.mail.search.SubjectTerm;
 
 
 public class JunkMailListenerService extends Service {
+    boolean running = true;
+    Thread thread;
     PowerManager pm;
     PowerManager.WakeLock wl;
     private final String junkMailFolder = "JUNK_MAIL_KILLER";
@@ -50,7 +52,7 @@ public class JunkMailListenerService extends Service {
         DBHelper dbHelper = new DBHelper(this);
         final Settings settings = dbHelper.readSettings();
 
-        Thread thread = new Thread(new Runnable(){
+        thread = new Thread(new Runnable(){
 
             @Override
             public void run() {
@@ -81,7 +83,7 @@ public class JunkMailListenerService extends Service {
                     Message[] toFolderMessages = new Message[1];
                     OrTerm searchTerm = setSearchTerms(settings);
 
-                    for (;;) {
+                    while (running) {
 
                         Message[] junkMails = fromFolder.search(searchTerm);
 
@@ -129,9 +131,12 @@ public class JunkMailListenerService extends Service {
 
     @Override
     public void onDestroy() {
+        //Stop thread.
+        running = false;
         // Wakelock off.
         wl.release();
         super.onDestroy();
+
         Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
     }
 
