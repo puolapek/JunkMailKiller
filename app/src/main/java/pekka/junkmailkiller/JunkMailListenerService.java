@@ -1,8 +1,10 @@
 package pekka.junkmailkiller;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.widget.Toast;
 
 import java.util.Properties;
@@ -22,12 +24,20 @@ import javax.mail.search.SubjectTerm;
 
 
 public class JunkMailListenerService extends Service {
-
+    PowerManager pm;
+    PowerManager.WakeLock wl;
     private final String junkMailFolder = "JUNK_MAIL_KILLER";
     Folder fromFolder;
     Folder toFolder;
     Store store;
     int frequence;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "JunkMailListenerService");
+    }
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -46,6 +56,8 @@ public class JunkMailListenerService extends Service {
             public void run() {
 
                 try {
+                    // Wakelock on.
+                    wl.acquire();
 
                     Properties properties = new Properties();
                     Session emailSession = Session.getDefaultInstance(properties);
@@ -117,6 +129,8 @@ public class JunkMailListenerService extends Service {
 
     @Override
     public void onDestroy() {
+        // Wakelock off.
+        wl.release();
         super.onDestroy();
         Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
     }
