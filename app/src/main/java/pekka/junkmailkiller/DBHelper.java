@@ -3,7 +3,6 @@ package pekka.junkmailkiller;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -21,6 +20,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_HOST = "HOST";
     private static final String KEY_USER = "USER";
     private static final String KEY_PASSWORD = "PASSWORD";
+    private static final String KEY_SETTINGS_OK = "SETTINGS_OK";
     private final String KEY_FREQ = "FREQ";
     private static final String KEY_KEYWORD = "KEYWORD";
 
@@ -41,19 +41,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO Auto-generated method stub
-        //db.execSQL("DROP TABLE IF EXISTS contacts");
-        //onCreate(db);
+
     }
 
-    public void insertData(SQLiteDatabase db, String key, String value) {
+    private void insertData(SQLiteDatabase db, String key, String value) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SETTINGS_COLUMN_KEY, key);
         contentValues.put(SETTINGS_COLUMN_VALUE, value);
         db.insert(SETTINGS_TABLE_NAME, null, contentValues);
     }
 
-    public void updateData(SQLiteDatabase db, String key, String value) {
+    private void updateData(SQLiteDatabase db, String key, String value) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(SETTINGS_COLUMN_KEY, key);
         contentValues.put(SETTINGS_COLUMN_VALUE, value);
@@ -85,6 +83,10 @@ public class DBHelper extends SQLiteOpenHelper {
         if (values.size() > 0) {
             settings.setPassword(values.get(0));
         }
+        values = getValues(KEY_SETTINGS_OK);
+        if (values.size() > 0) {
+            settings.setSettingsOK(values.get(0));
+        }
         values = getValues(KEY_FREQ);
         if (values.size() > 0) {
             settings.setFreq(values.get(0));
@@ -97,40 +99,54 @@ public class DBHelper extends SQLiteOpenHelper {
         return settings;
     }
 
+    public void insertOrUpdateSettingsOK(String ok) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        ArrayList<String> values = new ArrayList<String>();
 
-    public void insertOrUpdateSettings (String host, String user, String passwd, String freq)
+        values = getValues(KEY_SETTINGS_OK);
+        if (values.size() == 0) {
+            insertData(db, KEY_SETTINGS_OK, ok);
+        } else {
+            updateData(db, KEY_SETTINGS_OK, ok);
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+    }
+
+    public void insertOrUpdateSettings (Settings settings)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
-
         ArrayList<String> values = new ArrayList<String>();
 
         values = getValues(KEY_HOST);
         if (values.size() == 0) {
-            insertData(db, KEY_HOST, host);
+            insertData(db, KEY_HOST, settings.getHost());
         } else {
-            updateData(db, KEY_HOST, host);
+            updateData(db, KEY_HOST, settings.getHost());
         }
 
         values = getValues(KEY_USER);
         if (values.size() == 0) {
-            insertData(db, KEY_USER, user);
+            insertData(db, KEY_USER, settings.getUser());
         } else {
-            updateData(db, KEY_USER, user);
+            updateData(db, KEY_USER, settings.getUser());
         }
 
         values = getValues(KEY_PASSWORD);
         if (values.size() == 0) {
-            insertData(db, KEY_PASSWORD, passwd);
+            insertData(db, KEY_PASSWORD, settings.getPassword());
         } else {
-            updateData(db, KEY_PASSWORD, passwd);
+            updateData(db, KEY_PASSWORD, settings.getPassword());
         }
 
         values = getValues(KEY_FREQ);
         if (values.size() == 0) {
-            insertData(db, KEY_FREQ, freq);
+            insertData(db, KEY_FREQ, settings.getFreq());
         } else {
-            updateData(db, KEY_FREQ, freq);
+            updateData(db, KEY_FREQ, settings.getFreq());
         }
 
         db.setTransactionSuccessful();
@@ -154,12 +170,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return;
     }
 
-    public int numberOfRows(){
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, SETTINGS_TABLE_NAME);
-        return numRows;
-    }
-
     public ArrayList<String> getValues(String key)
     {
         ArrayList<String> dataList = new ArrayList<String>();
@@ -174,6 +184,8 @@ public class DBHelper extends SQLiteOpenHelper {
             dataList.add(value);
             res.moveToNext();
         }
+        res.close();
+
         return dataList;
     }
 }

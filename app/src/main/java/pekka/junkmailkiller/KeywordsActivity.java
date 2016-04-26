@@ -2,7 +2,6 @@ package pekka.junkmailkiller;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,7 +77,7 @@ public class KeywordsActivity extends AppCompatActivity {
 
         final ListView listview = (ListView) findViewById(R.id.listView);
         adapter=new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
+                R.layout.activity_keywords_text_view,
                 keywords);
         listview.setAdapter(adapter);
 

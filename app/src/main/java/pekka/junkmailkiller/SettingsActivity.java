@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Properties;
+
+import javax.mail.Session;
+import javax.mail.Store;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -46,14 +51,61 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void saveSettings(View view) {
         DBHelper dbHelper = new DBHelper(this);
+        Settings settings = new Settings();
 
-        EditText host = (EditText)findViewById(R.id.keywordText);
-        EditText user = (EditText)findViewById(R.id.userText);
-        EditText password = (EditText)findViewById(R.id.passwdText);
-        EditText freq = (EditText)findViewById(R.id.frequenceText);
+        settings.setHost(((EditText) findViewById(R.id.keywordText)).getText().toString());
+        settings.setUser(((EditText) findViewById(R.id.userText)).getText().toString());
+        settings.setPassword(((EditText) findViewById(R.id.passwdText)).getText().toString());
+        settings.setFreq(((EditText) findViewById(R.id.frequenceText)).getText().toString());
 
-        dbHelper.insertOrUpdateSettings(host.getText().toString(), user.getText().toString(), password.getText().toString(), freq.getText().toString());
+        dbHelper.insertOrUpdateSettings(settings);
 
-        Toast.makeText(this, "Settings saved.", Toast.LENGTH_LONG).show();
+        checkConnection(settings);
+
+        showSettingsMessage(dbHelper.readSettings());
+    }
+
+    private void showSettingsMessage(Settings settings) {
+        if (settings.getSettingsOK().equals("true")) {
+            Toast.makeText(this, "Settings OK. Connection to mail server can be established.", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Invalid Settings. Connection to mail server can NOT be established!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void checkConnection(Settings settings) {
+
+        final DBHelper dbHelper = new DBHelper(this);
+        final String host = settings.getHost();
+        final String user = settings.getUser();
+        final String password = settings.getPassword();
+
+        Thread thread = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+
+                try {
+                    Properties properties = new Properties();
+                    Session emailSession = Session.getDefaultInstance(properties);
+                    Store store = emailSession.getStore("imap");
+
+                    dbHelper.insertOrUpdateSettingsOK("false");
+                    store.connect(host, user, password);
+                    dbHelper.insertOrUpdateSettingsOK("true");
+                    store.close();
+                }  catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

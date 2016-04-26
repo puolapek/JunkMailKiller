@@ -9,6 +9,7 @@ public class Settings {
     private String host;
     private String user;
     private String password;
+    private String settingsOK;
     private String freq;
     private ArrayList<String> keyWords;
 
@@ -51,5 +52,13 @@ public class Settings {
 
     public void setKeyWords(ArrayList<String> keyWords) {
         this.keyWords = keyWords;
+    }
+
+    public String getSettingsOK() {
+        return settingsOK;
+    }
+
+    public void setSettingsOK(String settingsOK) {
+        this.settingsOK = settingsOK;
     }
 }

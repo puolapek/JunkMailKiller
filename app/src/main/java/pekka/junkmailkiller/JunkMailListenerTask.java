@@ -3,11 +3,9 @@ package pekka.junkmailkiller;
 import android.os.AsyncTask;
 
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
-import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
@@ -17,10 +15,8 @@ import javax.mail.search.FromStringTerm;
 import javax.mail.search.OrTerm;
 import javax.mail.search.SubjectTerm;
 
-
+/* NOT IN USE */
 public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
-
-    private final String junkMailFolder = "JUNK_MAIL_KILLER";
 
     @Override
     protected void onPreExecute() {
@@ -30,70 +26,16 @@ public class JunkMailListenerTask extends AsyncTask<Object,Void,Void> {
     protected Void doInBackground(Object... params) {
 
         try {
-            int frequence;
+            boolean settingsOK;
             Properties properties = new Properties();
             Session emailSession = Session.getDefaultInstance(properties);
             Store store = emailSession.getStore("imap");
             Settings settings = (Settings)params[0];
 
-            try {
-                frequence = Integer.parseInt(settings.getFreq());
-            } catch (NumberFormatException e) {
-                frequence = 5;
-            }
-
             store.connect(settings.getHost(), settings.getUser(), settings.getPassword());
 
             Folder fromFolder = store.getFolder("INBOX");
             fromFolder.open(Folder.READ_WRITE);
-
-            Folder toFolder = store.getFolder(junkMailFolder);
-            if (!toFolder.exists()) {
-                if (!createFolder(toFolder)) {
-                    fromFolder.close(true);
-                    toFolder.close(true);
-                    store.close();
-                    return null;
-                }
-            }
-            toFolder.open(Folder.READ_WRITE);
-
-            OrTerm searchTerm = setSearchTerms(settings);
-            Message[] toFolderMessages = new Message[1];
-
-            for (;;) {
-                // Get junk mails.
-                if (isCancelled()) {
-                    fromFolder.close(true);
-                    toFolder.close(true);
-                    store.close();
-                    break;
-                }
-
-                Message[] junkMails = fromFolder.search(searchTerm);
-
-                for (Message message : junkMails) {
-                    toFolderMessages[0] = message;
-                    fromFolder.copyMessages(toFolderMessages, toFolder);
-                    message.setFlag(Flags.Flag.DELETED, true);
-                }
-
-                fromFolder.close(true);
-                toFolder.close(true);
-                store.close();
-
-                try {
-                    TimeUnit.SECONDS.sleep(frequence);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                // Reopen
-                store.connect(settings.getHost(), settings.getUser(), settings.getPassword());
-                fromFolder.open(Folder.READ_WRITE);
-                toFolder.open(Folder.READ_WRITE);
-            }
 
         } catch (NoSuchProviderException e) {
             e.printStackTrace();

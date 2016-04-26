@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,9 +17,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+
+        enableButtons();
+
         if (!checkMailServerSettings()) {
-            // Some settings missing, go to settings page.
+            // Something wrong in settings, go to settings page.
             Intent intent = new Intent(this, SettingsActivity.class);
             this.startActivity(intent);
         }
@@ -52,22 +55,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void startService(View view) {
 
-        startService(new Intent(getBaseContext(), JunkMailListenerService.class));
+        if (checkMailServerSettings()) {
+            startService(new Intent(getBaseContext(), JunkMailListenerService.class));
+        } else {
+            Toast.makeText(this, "Check Settings. Connection to mail server can NOT be established!", Toast.LENGTH_LONG).show();
+        }
 
-        findViewById(R.id.startButton).setEnabled(false);
-        findViewById(R.id.stopButton).setEnabled(true);
+        enableButtons();
     }
 
     public void stopService(View view) {
 
         stopService(new Intent(getBaseContext(), JunkMailListenerService.class));
 
-        findViewById(R.id.startButton).setEnabled(true);
-        findViewById(R.id.stopButton).setEnabled(false);
+        enableButtons();
     }
 
-    private void init() {
-
+    private void enableButtons() {
 
         if (!isMyServiceRunning(JunkMailListenerService.class)) {
             findViewById(R.id.startButton).setEnabled(true);
@@ -92,8 +96,11 @@ public class MainActivity extends AppCompatActivity {
 
         DBHelper dbHelper = new DBHelper(this);
         Settings settings = dbHelper.readSettings();
-
-        return !(settings.getHost() == null || settings.getUser() == null || settings.getPassword() == null);
+        if (settings.getHost() == null || settings.getUser() == null || settings.getPassword() == null || settings.getSettingsOK().equals("false")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 

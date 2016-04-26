@@ -13,8 +13,6 @@ import java.util.concurrent.TimeUnit;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.search.BodyTerm;
@@ -24,15 +22,15 @@ import javax.mail.search.SubjectTerm;
 
 
 public class JunkMailListenerService extends Service {
-    boolean running = true;
-    Thread thread;
-    PowerManager pm;
-    PowerManager.WakeLock wl;
+    private boolean running = true;
+    private Thread thread;
+    private PowerManager pm;
+    private PowerManager.WakeLock wl;
     private final String junkMailFolder = "JUNK_MAIL_KILLER";
-    Folder fromFolder;
-    Folder toFolder;
-    Store store;
-    int frequence;
+    private Folder fromFolder;
+    private Folder toFolder;
+    private Store store;
+    private int frequence;
 
     @Override
     public void onCreate() {
@@ -49,7 +47,7 @@ public class JunkMailListenerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        DBHelper dbHelper = new DBHelper(this);
+        final DBHelper dbHelper = new DBHelper(this);
         final Settings settings = dbHelper.readSettings();
 
         thread = new Thread(new Runnable(){
@@ -70,7 +68,9 @@ public class JunkMailListenerService extends Service {
                         frequence = 5;
                     }
 
+                    dbHelper.insertOrUpdateSettingsOK("false");
                     store.connect(settings.getHost(), settings.getUser(), settings.getPassword());
+                    dbHelper.insertOrUpdateSettingsOK("true");
 
                     fromFolder = store.getFolder("INBOX");
                     fromFolder.open(Folder.READ_WRITE);
@@ -108,24 +108,21 @@ public class JunkMailListenerService extends Service {
                         store.connect(settings.getHost(), settings.getUser(), settings.getPassword());
                         fromFolder.open(Folder.READ_WRITE);
                         toFolder.open(Folder.READ_WRITE);
-
                     }
 
-                } catch (NoSuchProviderException e) {
+                }  catch (Exception e) {
                     e.printStackTrace();
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    if (wl.isHeld()) {
+                        wl.release();
+                    }
                 }
-
-
             }
         });
 
         thread.start();
 
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Service started", Toast.LENGTH_LONG).show();
+
         return START_STICKY;
     }
 
@@ -133,8 +130,12 @@ public class JunkMailListenerService extends Service {
     public void onDestroy() {
         //Stop thread.
         running = false;
+
         // Wakelock off.
-        wl.release();
+        if (wl.isHeld()) {
+            wl.release();
+        }
+
         super.onDestroy();
 
         Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();

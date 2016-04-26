@@ -8,7 +8,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".KeywordsActivity"
-    android:id="@+id/keywordsLayout">
+    android:id="@+id/keywordsLayout"
+    android:background="#ff2c2c">
 
 
     <ListView
@@ -16,7 +17,9 @@
         android:layout_height="250dp"
         android:layout_alignParentTop="true"
         android:id="@+id/listView"
-        android:layout_above="@+id/addKeywordButton" />
+        android:layout_above="@+id/addKeywordButton"
+        android:fastScrollAlwaysVisible="false"
+        android:textFilterEnabled="false" />
 
     <EditText
         android:layout_width="wrap_content"
