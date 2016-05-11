@@ -15,8 +15,10 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.search.AndTerm;
 import javax.mail.search.BodyTerm;
 import javax.mail.search.FromStringTerm;
+import javax.mail.search.NotTerm;
 import javax.mail.search.OrTerm;
 import javax.mail.search.SubjectTerm;
 
@@ -81,7 +83,11 @@ public class JunkMailListenerService extends Service {
                     }
                     toFolder.open(Folder.READ_WRITE);
                     Message[] toFolderMessages = new Message[1];
-                    OrTerm searchTerm = setSearchTerms(settings);
+
+                    OrTerm keywordsTerm = setKeywordTerms(settings);
+                    OrTerm exceptionsTerm = setExceptionTerms(settings);
+                    NotTerm notExceptionTerm = new NotTerm(exceptionsTerm);
+                    AndTerm searchTerm = new AndTerm(keywordsTerm, notExceptionTerm);
 
                     while (running) {
 
@@ -141,15 +147,15 @@ public class JunkMailListenerService extends Service {
         Toast.makeText(this, "Service stopped", Toast.LENGTH_LONG).show();
     }
 
-    public static OrTerm setSearchTerms(Settings settings) {
+    public static OrTerm setKeywordTerms(Settings settings) {
         int NUMBER_OF_KEYWORDS = settings.getKeyWords().size();
         SubjectTerm[] subjectTerms = new SubjectTerm[NUMBER_OF_KEYWORDS];
         BodyTerm[] bodyTerms = new BodyTerm[NUMBER_OF_KEYWORDS];
-        FromStringTerm[] fromStringTerms = new FromStringTerm[NUMBER_OF_KEYWORDS];
+        FromStringTerm[] fromTerms = new FromStringTerm[NUMBER_OF_KEYWORDS];
 
         for (int i = 0; i < NUMBER_OF_KEYWORDS; i++) {
             FromStringTerm fromStringTerm = new FromStringTerm(settings.getKeyWords().get(i));
-            fromStringTerms[i] = fromStringTerm;
+            fromTerms[i] = fromStringTerm;
 
             SubjectTerm subjectTerm = new SubjectTerm(settings.getKeyWords().get(i));
             subjectTerms[i] = subjectTerm;
@@ -162,10 +168,36 @@ public class JunkMailListenerService extends Service {
         //FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
         OrTerm subjectOrTerms = new OrTerm(subjectTerms);
         OrTerm bodyOrTerms = new OrTerm(bodyTerms);
-        OrTerm fromStringOrTerms = new OrTerm(fromStringTerms);
+        OrTerm fromStringOrTerms = new OrTerm(fromTerms);
         OrTerm subjectBodyOrterms = new OrTerm(subjectOrTerms, bodyOrTerms);
         OrTerm allOrTerms = new OrTerm(subjectBodyOrterms, fromStringOrTerms);
         //AndTerm searchTerm = new AndTerm(unseenFlagTerm, allOrTerms);
+
+        return allOrTerms;
+    }
+
+    public static OrTerm setExceptionTerms(Settings settings) {
+        int NUMBER_OF_EX_KEYWORDS = settings.getExKeyWords().size();
+        SubjectTerm[] subjectTerms = new SubjectTerm[NUMBER_OF_EX_KEYWORDS];
+        BodyTerm[] bodyTerms = new BodyTerm[NUMBER_OF_EX_KEYWORDS];
+        FromStringTerm[] fromTerms = new FromStringTerm[NUMBER_OF_EX_KEYWORDS];
+
+        for (int i = 0; i < NUMBER_OF_EX_KEYWORDS; i++) {
+            FromStringTerm fromStringTerm = new FromStringTerm(settings.getExKeyWords().get(i));
+            fromTerms[i] = fromStringTerm;
+
+            SubjectTerm subjectTerm = new SubjectTerm(settings.getExKeyWords().get(i));
+            subjectTerms[i] = subjectTerm;
+
+            BodyTerm bodyTerm = new BodyTerm(settings.getExKeyWords().get(i));
+            bodyTerms[i] = bodyTerm;
+        }
+
+        OrTerm subjectOrTerms = new OrTerm(subjectTerms);
+        OrTerm bodyOrTerms = new OrTerm(bodyTerms);
+        OrTerm fromStringOrTerms = new OrTerm(fromTerms);
+        OrTerm subjectBodyOrterms = new OrTerm(subjectOrTerms, bodyOrTerms);
+        OrTerm allOrTerms = new OrTerm(subjectBodyOrterms, fromStringOrTerms);
 
         return allOrTerms;
     }

@@ -23,8 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String KEY_SETTINGS_OK = "SETTINGS_OK";
     private final String KEY_FREQ = "FREQ";
     private static final String KEY_KEYWORD = "KEYWORD";
-
-    private HashMap hp;
+    private static final String KEY_EX_KEYWORD = "EX_KEYWORD";
 
     public DBHelper(Context context)
     {
@@ -67,6 +66,15 @@ public class DBHelper extends SQLiteOpenHelper {
                 new String[] { KEY_KEYWORD, value });
     }
 
+    public Integer deleteExKeyword (String value)
+    {
+        String whereClause = SETTINGS_COLUMN_KEY + " = ? AND " + SETTINGS_COLUMN_VALUE + " = ? ";
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(SETTINGS_TABLE_NAME,
+                whereClause,
+                new String[] { KEY_EX_KEYWORD, value });
+    }
+
     public Settings readSettings() {
         ArrayList<String> values = new ArrayList<String>();
         Settings settings = new Settings();
@@ -94,6 +102,10 @@ public class DBHelper extends SQLiteOpenHelper {
         values = getValues(KEY_KEYWORD);
         if (values.size() > 0) {
             settings.setKeyWords(values);
+        }
+        values = getValues(KEY_EX_KEYWORD);
+        if (values.size() > 0) {
+            settings.setExKeyWords(values);
         }
 
         return settings;
@@ -162,6 +174,20 @@ public class DBHelper extends SQLiteOpenHelper {
         db.beginTransaction();
 
         insertData(db, KEY_KEYWORD, keyword);
+
+        db.setTransactionSuccessful();
+        db.endTransaction();
+        db.close();
+
+        return;
+    }
+
+    public void insertExKeyword(String keyword)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+
+        insertData(db, KEY_EX_KEYWORD, keyword);
 
         db.setTransactionSuccessful();
         db.endTransaction();

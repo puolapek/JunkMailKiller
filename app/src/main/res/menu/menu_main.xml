@@ -13,6 +13,11 @@
         android:title="@string/action_keywords">
     </item>
     <item
+        android:id="@+id/action_ex_keywords"
+        android:orderInCategory="100"
+        android:title="@string/action_ex_keywords">
+    </item>
+    <item
         android:id="@+id/action_help"
         android:orderInCategory="100"
         android:title="@string/action_help">

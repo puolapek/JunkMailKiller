@@ -12,6 +12,7 @@ public class Settings {
     private String settingsOK;
     private String freq;
     private ArrayList<String> keyWords;
+    private ArrayList<String> exKeyWords;
 
     public String getHost() {
         return host;
@@ -60,5 +61,13 @@ public class Settings {
 
     public void setSettingsOK(String settingsOK) {
         this.settingsOK = settingsOK;
+    }
+
+    public ArrayList<String> getExKeyWords() {
+        return exKeyWords;
+    }
+
+    public void setExKeyWords(ArrayList<String> exKeyWords) {
+        this.exKeyWords = exKeyWords;
     }
 }
