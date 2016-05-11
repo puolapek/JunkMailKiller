@@ -45,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
                 intent = new Intent(this, KeywordsActivity.class);
                 this.startActivity(intent);
                 break;
+            case R.id.action_help:
+                intent = new Intent(this, HelpActivity.class);
+                this.startActivity(intent);
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);

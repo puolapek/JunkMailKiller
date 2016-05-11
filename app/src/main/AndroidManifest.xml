@@ -32,6 +32,13 @@
             android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity" />
 
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/action_help"
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity" />
+
         <service android:name=".JunkMailListenerService" />
     </application>
 

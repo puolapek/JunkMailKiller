@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".KeywordsActivity"
     android:id="@+id/keywordsLayout"
-    android:background="#ff2c2c">
+    android:background="#a7c6f9">
 
 
     <ListView
