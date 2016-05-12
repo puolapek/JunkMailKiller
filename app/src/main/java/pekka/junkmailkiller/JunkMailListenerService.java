@@ -20,6 +20,7 @@ import javax.mail.search.BodyTerm;
 import javax.mail.search.FromStringTerm;
 import javax.mail.search.NotTerm;
 import javax.mail.search.OrTerm;
+import javax.mail.search.SearchTerm;
 import javax.mail.search.SubjectTerm;
 
 
@@ -83,15 +84,25 @@ public class JunkMailListenerService extends Service {
                     }
                     toFolder.open(Folder.READ_WRITE);
                     Message[] toFolderMessages = new Message[1];
+                    Message[] junkMails;
+                    AndTerm keywordsAndExceptionsTerm = null;
 
                     OrTerm keywordsTerm = setKeywordTerms(settings);
-                    OrTerm exceptionsTerm = setExceptionTerms(settings);
-                    NotTerm notExceptionTerm = new NotTerm(exceptionsTerm);
-                    AndTerm searchTerm = new AndTerm(keywordsTerm, notExceptionTerm);
+
+                    // Exceptions given ?
+                    if (settings.getExKeyWords() != null) {
+                        OrTerm exceptionsTerm = setExceptionTerms(settings);
+                        NotTerm notExceptionTerm = new NotTerm(exceptionsTerm);
+                        keywordsAndExceptionsTerm = new AndTerm(keywordsTerm, notExceptionTerm);
+                    }
 
                     while (running) {
 
-                        Message[] junkMails = fromFolder.search(searchTerm);
+                        if (settings.getExKeyWords() != null) {
+                            junkMails = fromFolder.search(keywordsAndExceptionsTerm);
+                        } else {
+                            junkMails = fromFolder.search(keywordsTerm);
+                        }
 
                         for (Message message : junkMails) {
                             toFolderMessages[0] = message;
