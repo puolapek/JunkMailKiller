@@ -115,7 +115,7 @@ public class KeywordsActivity extends AppCompatActivity {
             return;
         }
         dbHelper.insertKeyword(keyword.getText().toString());
-        Toast.makeText(this, "Keyword added.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, this.getString(R.string.msg_keyword_added), Toast.LENGTH_LONG).show();
 
         if (keywords == null) {
             keywords = new ArrayList<String>();

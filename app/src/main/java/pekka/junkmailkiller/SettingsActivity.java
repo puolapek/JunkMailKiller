@@ -67,9 +67,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void showSettingsMessage(Settings settings) {
         if (settings.getSettingsOK().equals("true")) {
-            Toast.makeText(this, "Settings OK. Connection to mail server can be established.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, this.getString(R.string.msg_settings_ok), Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Invalid Settings. Connection to mail server can NOT be established!", Toast.LENGTH_LONG).show();
+           Toast.makeText(this, this.getString(R.string.msg_invalid_settings), Toast.LENGTH_LONG).show();
         }
     }
 

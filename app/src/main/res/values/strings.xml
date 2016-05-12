@@ -18,6 +18,13 @@
     <string name="hint_password">Arriving mail server password.</string>
     <string name="hint_check_frequency">Frequency to check junk mails (in seconds).</string>
 
+    <string name="msg_no_keywords_found">No keywords found. Add keywords before starting the service.</string>
+    <string name="msg_check_settings">Check Settings. Connection to mail server can NOT be established!</string>
+    <string name="msg_settings_ok">Settings OK. Connection to mail server can be established.</string>
+    <string name="msg_invalid_settings">Invalid Settings. Connection to mail server can NOT be established!</string>
+    <string name="msg_keyword_added">Keyword added.</string>
+    <string name="msg_ex_keyword_added">Execption keyword added.</string>
+
     <string name="key_text">Key</string>
     <string name="from_text">From</string>
     <string name="subject_text">Subject</string>
@@ -34,20 +41,22 @@
         (normally your email address) and your password. Also the frequency of how often mails are checked has to be given.
         <br>When you save your settings, application tests the connection and informs you if everything is OK. </p>
         <b>Junk keywords</b>
-        <p>At this window you enter keywords for identifying junk mails. Application checks if some of the
+        <p>At this window you can enter keywords for identifying junk mails. Deleting keyword is done by just hitting it in the list.
+        <br>Application checks if some of the
         given keywords are found in mails in inbox folder. Keyword is checked from sender, subject and
         the actual body of the mail. Check is not case sensitive and keyword can be just a part of a word.
         <br>For example: if keyword is win, then mails containing words winner, wins, winter, twin etc. would be considered
         as junk mail.</p>
         <b>Exception keywords</b>
-        <p>At this window you enter exception keywords. If exception keyword is found in mail, that mail is never considered
-        as junk mail even if it contains junk keywords. Exception keyword is checked from sender, subject and
+        <p>At this window you can enter exception keywords. Deleting exception keyword is done by just hitting it in the list.
+        <br>If exception keyword is found in mail, that mail is never considered
+        as junk mail, even if it contains junk keywords. Exception keyword is checked from sender, subject and
         the actual body of the mail. Check is not case sensitive and exception keyword can be just a part of a word.</p>
         <b>Running the program</b>
         <p>If your settings and keywords are OK, you are ready to start the actual junk mail monitoring.
         Monitoring is a background process, so you can leave it running and start using other apps in your
         Android device. <br>You can go back to JunkMailKiller user interface anytime and for example change keywords.
-        Just restart the app to use new keywords.
+        Just restart the app then to use new keywords.
          </p>]]>
     </string>
     <string name="delete_button">Delete</string>

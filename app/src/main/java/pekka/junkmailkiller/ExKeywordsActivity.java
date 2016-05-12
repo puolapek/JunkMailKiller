@@ -115,7 +115,7 @@ public class ExKeywordsActivity extends AppCompatActivity {
             return;
         }
         dbHelper.insertExKeyword(keyword.getText().toString());
-        Toast.makeText(this, "Execption keyword added.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, this.getString(R.string.msg_ex_keyword_added), Toast.LENGTH_LONG).show();
 
         if (exKeywords == null) {
             exKeywords = new ArrayList<String>();

@@ -17,10 +17,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DBHelper dbHelper = new DBHelper(this);
+        Settings settings = dbHelper.readSettings();
 
         enableButtons();
 
-        if (!checkMailServerSettings()) {
+        if (!checkMailServerSettings(settings)) {
             // Something wrong in settings, go to settings page.
             Intent intent = new Intent(this, SettingsActivity.class);
             this.startActivity(intent);
@@ -62,11 +64,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startService(View view) {
+        DBHelper dbHelper = new DBHelper(this);
+        Settings settings = dbHelper.readSettings();
 
-        if (checkMailServerSettings()) {
-            startService(new Intent(getBaseContext(), JunkMailListenerService.class));
+        if (!checkMailServerSettings(settings)) {
+            Toast.makeText(this, this.getString(R.string.msg_check_settings), Toast.LENGTH_LONG).show();
+        } else if (settings.getKeyWords() == null) {
+            Toast.makeText(this, this.getString(R.string.msg_no_keywords_found), Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Check Settings. Connection to mail server can NOT be established!", Toast.LENGTH_LONG).show();
+            startService(new Intent(getBaseContext(), JunkMailListenerService.class));
         }
 
         enableButtons();
@@ -100,15 +106,8 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean checkMailServerSettings() {
-
-        DBHelper dbHelper = new DBHelper(this);
-        Settings settings = dbHelper.readSettings();
-        if (settings.getHost() == null || settings.getUser() == null || settings.getPassword() == null || settings.getSettingsOK().equals("false")) {
-            return false;
-        } else {
-            return true;
-        }
+    private boolean checkMailServerSettings(Settings settings) {
+        return !(settings.getHost() == null || settings.getUser() == null || settings.getPassword() == null || settings.getSettingsOK().equals("false"));
     }
 
 
