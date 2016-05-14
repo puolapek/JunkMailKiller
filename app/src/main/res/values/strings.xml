@@ -6,7 +6,7 @@
     <string name="action_ex_keywords">Exception keywords</string>
     <string name="start_service">START SERVICE</string>
     <string name="stop_service">STOP SERVICE</string>
-    <string name="heading">Moves junk mail to JUNK_MAIL_KILLER- folder at your mail server.</string>
+    <string name="heading">Monitors and filters junk mails at your mail server.</string>
     <string name="save_settings">Save settings</string>
     <string name="save_keyword">Save keyword</string>
     <string name="add_new_keyword">Add new keyword</string>
@@ -18,7 +18,7 @@
     <string name="hint_password">Arriving mail server password.</string>
     <string name="hint_check_frequency">Frequency to check junk mails (in seconds).</string>
 
-    <string name="msg_no_keywords_found">No keywords found. Add keywords before starting the service.</string>
+    <string name="msg_no_keywords_found">No junk keywords found. Add keywords before starting the service.</string>
     <string name="msg_check_settings">Check Settings. Connection to mail server can NOT be established!</string>
     <string name="msg_settings_ok">Settings OK. Connection to mail server can be established.</string>
     <string name="msg_invalid_settings">Invalid Settings. Connection to mail server can NOT be established!</string>
@@ -33,7 +33,7 @@
         <![CDATA[
         <h1><b>Junk Mail Killer</b></h1>
         <b>General</b>
-        <p>Application runs on background and monitors inbox folder of defined mail box. Junk mails are detected based on given keywords
+        <p>Application runs on background and monitors inbox folder of defined mail server. Junk mails are detected based on given keywords
         and mails are transferred to JUNK_MAIL_KILLER folder. This folder is automatically created by the app.</p>
         <p><b>NOTE! This is a demo version and so far tested only in Elisa/Saunalahti environment.</b></p>
         <b>Settings</b>
