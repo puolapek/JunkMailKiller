@@ -6,7 +6,7 @@
     <string name="action_ex_keywords">Exception keywords</string>
     <string name="start_service">START SERVICE</string>
     <string name="stop_service">STOP SERVICE</string>
-    <string name="heading">Monitors and filters junk mails at your mail server.</string>
+    <string name="heading">Monitors and filters junkmails at your mail server.</string>
     <string name="save_settings">Save settings</string>
     <string name="save_keyword">Save keyword</string>
     <string name="add_new_keyword">Add new keyword</string>
